@@ -1,0 +1,27 @@
+{
+	"name": "avscordbot",
+	"version": "1.0.0",
+	"description": "Simple bot to create game day threads for Avscord",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/phinocio/AvscordBot.git"
+	},
+	"author": "Phinocio",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/phinocio/AvscordBot/issues"
+	},
+	"homepage": "https://github.com/phinocio/AvscordBot#readme",
+	"dependencies": {
+		"discord.js": "^14.14.1"
+	},
+	"devDependencies": {
+		"eslint": "^8.57.0",
+		"eslint-config-prettier": "^9.1.0",
+		"prettier": "^3.2.5"
+	}
+}

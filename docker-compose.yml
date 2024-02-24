@@ -1,0 +1,12 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: app
+        image: avscordbot-app
+        container_name: avscordbot-app
+        restart: unless-stopped
+        entrypoint: sh -c "node ."
+        volumes:
+            - ./storage:/app/storage
