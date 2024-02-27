@@ -1,4 +1,7 @@
 {
-	"token": "change-me",
-	"threadsChannel": ""
+	"token": "",
+	"threadsChannel": "",
+	"teamName": "",
+	"clientId": "",
+	"guildId": ""
 }
