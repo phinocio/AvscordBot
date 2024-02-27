@@ -1,6 +1,6 @@
 const formatInTimeZone = require("date-fns-tz/formatInTimeZone");
 const NHLApi = require("./api/NHLApi");
-const { threadsChannel, teamName } = require("../config.json");
+const { threadsChannel, teamName, pingRole } = require("../config.json");
 const { ThreadAutoArchiveDuration, EmbedBuilder } = require("discord.js");
 
 module.exports = class GameThread {
@@ -42,7 +42,7 @@ module.exports = class GameThread {
 
 		const msg = await thread.send({ embeds: [gameEmbed] });
 		msg.pin();
-		thread.send(`${game.awayTeam.abbrev} @ ${game.homeTeam.abbrev}: <@&1211849064921047100>`);
+		thread.send(`${game.awayTeam.abbrev} @ ${game.homeTeam.abbrev}: <@&${pingRole}>`);
 		return thread;
 	}
 

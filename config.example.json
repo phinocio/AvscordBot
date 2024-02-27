@@ -3,5 +3,6 @@
 	"threadsChannel": "",
 	"teamName": "",
 	"clientId": "",
-	"guildId": ""
+	"guildId": "",
+	"pingRole": ""
 }
