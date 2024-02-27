@@ -5,6 +5,7 @@ const GameThread = require("./src/GameThread");
 const cron = require("node-cron");
 const fs = require("node:fs");
 const path = require("node:path");
+const formatInTimeZone = require("date-fns-tz/formatInTimeZone");
 
 // Create a new client instance
 const client = new Client({
@@ -52,16 +53,24 @@ client.login(token);
 // 0 14 * * * is 7am MT/2pm UTC. Server is in UTC.
 cron.schedule("0 14 * * *", async () => {
 	const gameThread = new GameThread(client);
-	const channel = client.channels.cache.get(threadsChannel);
-	let thread = await gameThread.getThread();
 
-	if (!thread) {
-		thread = await gameThread.create();
+	const { game } = await gameThread.getGame();
 
-		if (thread.joinable()) {
-			await thread.join();
+	if (
+		formatInTimeZone(new Date(), "America/Denver", "yyyy-MM-dd") ===
+		formatInTimeZone(game.startTimeUTC, "America/Denver", "yyyy-MM-dd")
+	) {
+		const channel = client.channels.cache.get(threadsChannel);
+		let thread = await gameThread.getThread();
+
+		if (!thread) {
+			thread = await gameThread.create();
+
+			if (thread.joinable()) {
+				await thread.join();
+			}
 		}
-	}
 
-	channel.send(`Join the Game Day Thread: ${thread}`);
+		channel.send(`Join the Game Day Thread: ${thread}`);
+	}
 });
