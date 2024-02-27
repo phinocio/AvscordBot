@@ -5,7 +5,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("gamethread")
 		.setDescription("Creates a Game Day Thread, or tags it if it already exists.")
-		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator | PermissionFlagsBits.ManageThreads),
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageThreads),
 
 	async execute(interaction) {
 		await interaction.reply("Creating Game Day Thread...");
