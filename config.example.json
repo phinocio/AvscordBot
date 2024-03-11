@@ -4,5 +4,9 @@
 	"teamName": "",
 	"clientId": "",
 	"guildId": "",
-	"pingRole": ""
+	"pingRole": "",
+	"webhooks": {
+		"redditFeed": ""
+	},
+	"subreddit": "funny"
 }

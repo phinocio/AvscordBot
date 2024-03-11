@@ -6,6 +6,7 @@ const cron = require("node-cron");
 const fs = require("node:fs");
 const path = require("node:path");
 const formatInTimeZone = require("date-fns-tz/formatInTimeZone");
+const { RedditFeed } = require("./src/cron/redditFeed");
 
 // Create a new client instance
 const client = new Client({
@@ -73,4 +74,10 @@ cron.schedule("0 14 * * *", async () => {
 
 		channel.send(`Join the Game Day Thread: ${thread}`);
 	}
+});
+
+const redditFeed = new RedditFeed();
+// * * * * * is every minute
+cron.schedule("* * * * *", () => {
+	redditFeed.getNewPosts();
 });
