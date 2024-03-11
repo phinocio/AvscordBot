@@ -57,7 +57,7 @@ exports.RedditFeed = class RedditFeed {
 							url: newPosts.data.children[0].data.url,
 							description: newPosts.data.children[0].data.selftext.slice(0, 200) + "...",
 							thumbnail: {
-								url: "https://cdn.discordapp.com/attachments/844775429306581022/1216818069276594387/6002f95551c2ec00048c6c70.png",
+								url: "https://i.imgur.com/lnZCKgN.png",
 							},
 							fields: [
 								{
@@ -85,7 +85,7 @@ exports.RedditFeed = class RedditFeed {
 							title: newPosts.data.children[0].data.title,
 							url: newPosts.data.children[0].data.url,
 							thumbnail: {
-								url: "https://cdn.discordapp.com/attachments/844775429306581022/1216818069276594387/6002f95551c2ec00048c6c70.png",
+								url: "https://i.imgur.com/lnZCKgN.png",
 							},
 							fields: [
 								{
