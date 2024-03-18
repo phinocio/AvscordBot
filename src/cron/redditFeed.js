@@ -1,15 +1,16 @@
-const { webhooks, subreddit } = require("../../config.json");
+const { subreddit, redditChannel } = require("../../config.json");
 const Storage = require("../helpers/storage");
 const { execSync } = require("node:child_process");
 const md5 = require("crypto-js/md5");
+const { EmbedBuilder } = require("discord.js");
 
 exports.RedditFeed = class RedditFeed {
-	async getNewPosts() {
+	async getNewPosts(client) {
 		const url = `https://www.reddit.com/r/${subreddit}/new.json`;
 
 		let newPosts = undefined;
 
-		const cmd = `curl -S ${url}`;
+		const cmd = `curl -Ss ${url}`;
 		const resp = execSync(cmd, (error, stdout, stderr) => {
 			if (error) {
 				console.log(`error: ${error.message}`);
@@ -23,6 +24,8 @@ exports.RedditFeed = class RedditFeed {
 
 		newPosts = JSON.parse(resp);
 
+		const post = newPosts.data.children[0].data;
+
 		// const response = await fetch(url, {
 		// 	method: "GET",
 		// 	headers: {
@@ -34,90 +37,48 @@ exports.RedditFeed = class RedditFeed {
 
 		this.newestPost = await Storage.readTxt("redditfeed.txt");
 
-		const postHash = md5(
-			newPosts.data.children[0].data.title +
-				newPosts.data.children[0].data.author +
-				newPosts.data.children[0].data.created_utc
-		).toString();
+		const postHash = md5(post.title + post.author + post.created_utc).toString();
 
-		if (this.newestPost != postHash) {
+		if (this.newestPost !== postHash) {
 			// It's a new post, so overwrite the hash in the file.
 			await Storage.store("redditfeed.txt", postHash);
-			let data;
+			const channel = client.channels.cache.get(redditChannel);
 
-			if (newPosts.data.children[0].data.is_self) {
-				data = {
-					embeds: [
-						{
-							author: {
-								name: `New self-post from ${newPosts.data.children[0].data.author}`,
-								url: newPosts.data.children[0].data.url,
-							},
-							title: newPosts.data.children[0].data.title,
-							url: newPosts.data.children[0].data.url,
-							description: newPosts.data.children[0].data.selftext.slice(0, 200) + "...",
-							thumbnail: {
-								url: "https://i.imgur.com/lnZCKgN.png",
-							},
-							fields: [
-								{
-									name: "Author",
-									value: `/u/${newPosts.data.children[0].data.author}`,
-									inline: "true",
-								},
-								{
-									name: "Content Warning",
-									value: newPosts.data.children[0].data.over_18 ? "18+" : "None",
-									inline: "true",
-								},
-							],
-						},
-					],
-				};
-			} else {
-				data = {
-					embeds: [
-						{
-							author: {
-								name: `New media post from ${newPosts.data.children[0].data.author}`,
-								url: `https://reddit.com${newPosts.data.children[0].data.permalink}`,
-							},
-							title: newPosts.data.children[0].data.title,
-							url: newPosts.data.children[0].data.url,
-							thumbnail: {
-								url: "https://i.imgur.com/lnZCKgN.png",
-							},
-							fields: [
-								{
-									name: "Author",
-									value: `/u/${newPosts.data.children[0].data.author}`,
-									inline: "true",
-								},
-								{
-									name: "Content Warning",
-									value: newPosts.data.children[0].data.over_18 ? "18+" : "None",
-									inline: "true",
-								},
-							],
-							image: {
-								url: newPosts.data.children[0].data.url,
-							},
-						},
-					],
-				};
+			const data = new EmbedBuilder()
+				.setTitle(post.title)
+				.setURL(`https://reddit.com${post.permalink}`)
+				.setThumbnail("https://i.imgur.com/lnZCKgN.png")
+
+				.addFields(
+					{ name: "Author", value: `/u/${post.author}`, inline: true },
+					{ name: "Content Warning", value: post.over_18 ? "18+" : "None", inline: true }
+				)
+				.setFooter({ text: `/r/ColoradoAvalanche`, iconURL: "https://i.imgur.com/yTWkQnj.png" });
+
+			if (post.selftext) {
+				data.setDescription(post.selftext);
 			}
 
-			try {
-				await fetch(webhooks.redditFeed, {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify(data),
-				});
-			} catch (e) {
-				console.log("reddit feed error: " + e.message);
+			if (!post.over_18) {
+				if (post.url.endsWith(".jpg") || post.url.endsWith(".png") || post.url.endsWith(".gif")) {
+					data.setImage(post.url);
+				} else {
+					data.setImage(post.thumbnail);
+				}
 			}
+
+			await channel.send({ embeds: [data] });
+			// try {
+			// 	await fetch(webhooks.redditFeed, {
+			// 		method: "POST",
+			// 		headers: {
+			// 			"Content-Type": "application/json",
+			// 		},
+			// 		body: JSON.stringify(data),
+			// 	});
+			// } catch (e) {
+			// 	console.log("reddit feed error: " + e.message);
+			// }
 		}
 	}
 };

@@ -79,5 +79,5 @@ cron.schedule("0 14 * * *", async () => {
 const redditFeed = new RedditFeed();
 // * * * * * is every minute
 cron.schedule("* * * * *", () => {
-	redditFeed.getNewPosts();
+	redditFeed.getNewPosts(client);
 });
