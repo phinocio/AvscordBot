@@ -1,4 +1,4 @@
-const { subreddit, redditChannel } = require("../../config.json");
+// const { subreddit, redditChannel } = require("../../config.json");
 const Storage = require("../helpers/storage");
 const { execSync } = require("node:child_process");
 const md5 = require("crypto-js/md5");
@@ -6,7 +6,7 @@ const { EmbedBuilder } = require("discord.js");
 
 exports.RedditFeed = class RedditFeed {
 	async getNewPosts(client) {
-		const url = `https://www.reddit.com/r/${subreddit}/new.json`;
+		const url = `https://www.reddit.com/r/${process.env.SUBREDDIT}/new.json`;
 
 		let newPosts = undefined;
 
@@ -42,7 +42,7 @@ exports.RedditFeed = class RedditFeed {
 		if (this.newestPost !== postHash) {
 			// It's a new post, so overwrite the hash in the file.
 			await Storage.store("redditfeed.txt", postHash);
-			const channel = client.channels.cache.get(redditChannel);
+			const channel = client.channels.cache.get(process.env.REDDIT_CHANNEL);
 
 			const data = new EmbedBuilder()
 				.setTitle(post.title)

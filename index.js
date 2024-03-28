@@ -1,6 +1,8 @@
+require("dotenv").config();
+
 // Require the necessary discord.js classes
 const { Client, Collection, Events, GatewayIntentBits, ActivityType } = require("discord.js");
-const { token, threadsChannel } = require("./config.json");
+// const { token, threadsChannel } = require("./config.json");
 const GameThread = require("./src/GameThread");
 const cron = require("node-cron");
 const fs = require("node:fs");
@@ -49,7 +51,7 @@ client.once(Events.ClientReady, (readyClient) => {
 	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 
-client.login(token);
+client.login(process.env.TOKEN);
 
 // 0 14 * * * is 7am MT/2pm UTC. Server is in UTC.
 cron.schedule("0 14 * * *", async () => {
@@ -61,7 +63,7 @@ cron.schedule("0 14 * * *", async () => {
 		formatInTimeZone(new Date(), "America/Denver", "yyyy-MM-dd") ===
 		formatInTimeZone(game.startTimeUTC, "America/Denver", "yyyy-MM-dd")
 	) {
-		const channel = client.channels.cache.get(threadsChannel);
+		const channel = client.channels.cache.get(process.env.THREADS_CHANNEL);
 		let thread = await gameThread.getThread();
 
 		if (!thread) {

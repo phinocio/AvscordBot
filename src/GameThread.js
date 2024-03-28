@@ -1,12 +1,12 @@
 const formatInTimeZone = require("date-fns-tz/formatInTimeZone");
 const NHLApi = require("./api/NHLApi");
-const { threadsChannel, teamName, pingRole } = require("../config.json");
+// const { threadsChannel, teamName, pingRole } = require("../config.json");
 const { ThreadAutoArchiveDuration, EmbedBuilder } = require("discord.js");
 
 module.exports = class GameThread {
 	constructor(client) {
 		this.client = client;
-		this.api = new NHLApi(teamName);
+		this.api = new NHLApi(process.env.TEAM_NAME);
 	}
 
 	async getGame() {
@@ -16,7 +16,7 @@ module.exports = class GameThread {
 	}
 
 	async create() {
-		const channel = this.client.channels.cache.get(threadsChannel);
+		const channel = this.client.channels.cache.get(process.env.THREADS_CHANNEL);
 		const { game, threadName } = await this.getGame();
 		const thread = await channel.threads.create({
 			name: threadName,
@@ -30,25 +30,25 @@ module.exports = class GameThread {
 			.setTitle(threadName)
 			.setAuthor({
 				name: "Game Day!",
-				iconURL: "https://cms.nhl.bamgrid.com/images/photos/281721016/256x256/cut.png",
+				iconURL: "https://i.imgur.com/yTWkQnj.png",
 			})
 			.setDescription("Go team, do the sport.")
 			.setFooter({
 				text: `${game.venue.default} - ${game.tvBroadcasts.reduce((acc, x) => {
 					return acc + x.network + " ";
 				}, "")}`,
-				iconURL: "https://cms.nhl.bamgrid.com/images/photos/281721016/256x256/cut.png",
+				iconURL: "https://i.imgur.com/yTWkQnj.png",
 			});
 
 		const msg = await thread.send({ embeds: [gameEmbed] });
 		msg.pin();
-		thread.send(`${game.awayTeam.abbrev} @ ${game.homeTeam.abbrev}: <@&${pingRole}>`);
+		thread.send(`${game.awayTeam.abbrev} @ ${game.homeTeam.abbrev}: <@&${process.env.PING_ROLE}>`);
 		return thread;
 	}
 
 	// This also serves as a way to check if the thread exists.
 	async getThread() {
-		const channel = this.client.channels.cache.get(threadsChannel);
+		const channel = this.client.channels.cache.get(process.env.THREADS_CHANNEL);
 		const { threadName } = await this.getGame();
 		return channel.threads.cache.find((x) => x.name === threadName);
 	}
