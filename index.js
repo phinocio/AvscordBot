@@ -1,14 +1,13 @@
 require("dotenv").config();
 
-// Require the necessary discord.js classes
 const { Client, Collection, Events, GatewayIntentBits, ActivityType } = require("discord.js");
-// const { token, threadsChannel } = require("./config.json");
 const GameThread = require("./src/GameThread");
 const cron = require("node-cron");
 const fs = require("node:fs");
 const path = require("node:path");
 const formatInTimeZone = require("date-fns-tz/formatInTimeZone");
 const { RedditFeed } = require("./src/cron/redditFeed");
+const { RedditPost } = require("./src/database/database");
 
 // Create a new client instance
 const client = new Client({
@@ -48,6 +47,7 @@ for (const file of eventFiles) {
 }
 
 client.once(Events.ClientReady, (readyClient) => {
+	RedditPost.sync();
 	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 

@@ -1,5 +1,4 @@
-// const { subreddit, redditChannel } = require("../../config.json");
-const Storage = require("../helpers/storage");
+const { RedditPost } = require("../database/database");
 const { execSync } = require("node:child_process");
 const md5 = require("crypto-js/md5");
 const { EmbedBuilder } = require("discord.js");
@@ -25,23 +24,12 @@ exports.RedditFeed = class RedditFeed {
 		newPosts = JSON.parse(resp);
 
 		const post = newPosts.data.children[0].data;
-
-		// const response = await fetch(url, {
-		// 	method: "GET",
-		// 	headers: {
-		// 		"Content-Type": "application/json",
-		// 		"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:121.0) Gecko/20100101 Firefox/121.0",
-		// 	},
-		// });
-		// console.log(response);
-
-		this.newestPost = await Storage.readTxt("redditfeed.txt");
-
 		const postHash = md5(post.title + post.author + post.created_utc).toString();
+		const postExists = await RedditPost.findOne({ where: { post_id: postHash } });
 
-		if (this.newestPost !== postHash) {
-			// It's a new post, so overwrite the hash in the file.
-			await Storage.store("redditfeed.txt", postHash);
+		// If the post doesn't exist in the database, then we can be relatively sure that it
+		// has not been sent in the reddit feed channel.
+		if (!postExists) {
 			const channel = client.channels.cache.get(process.env.REDDIT_CHANNEL);
 
 			const data = new EmbedBuilder()
@@ -62,23 +50,13 @@ exports.RedditFeed = class RedditFeed {
 			if (!post.over_18) {
 				if (post.url.endsWith(".jpg") || post.url.endsWith(".png") || post.url.endsWith(".gif")) {
 					data.setImage(post.url);
-				} else {
+				} else if (post.thumbnail !== "default") {
 					data.setImage(post.thumbnail);
 				}
 			}
 
 			await channel.send({ embeds: [data] });
-			// try {
-			// 	await fetch(webhooks.redditFeed, {
-			// 		method: "POST",
-			// 		headers: {
-			// 			"Content-Type": "application/json",
-			// 		},
-			// 		body: JSON.stringify(data),
-			// 	});
-			// } catch (e) {
-			// 	console.log("reddit feed error: " + e.message);
-			// }
+			await RedditPost.create({ post_id: postHash });
 		}
 	}
 };
