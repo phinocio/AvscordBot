@@ -75,13 +75,6 @@ cron.schedule("0 14 * * *", async () => {
 		}
 
 		channel.send(`Join the Game Day Thread: ${thread}`);
-		console.log("Game Day Thread created");
-	} else {
-		console.log("Game Day Thread not created");
-		console.log(
-			formatInTimeZone(new Date(), "America/Denver", "yyyy-MM-dd") ===
-				formatInTimeZone(game.startTimeUTC, "America/Denver", "yyyy-MM-dd")
-		);
 	}
 });
 

@@ -31,32 +31,41 @@ exports.RedditFeed = class RedditFeed {
 		// has not been sent in the reddit feed channel.
 		if (!postExists) {
 			const channel = client.channels.cache.get(process.env.REDDIT_CHANNEL);
+			try {
+				const data = new EmbedBuilder()
+					.setTitle(post.title)
+					.setURL(`https://reddit.com${post.permalink}`)
+					.setThumbnail("https://i.imgur.com/lnZCKgN.png")
 
-			const data = new EmbedBuilder()
-				.setTitle(post.title)
-				.setURL(`https://reddit.com${post.permalink}`)
-				.setThumbnail("https://i.imgur.com/lnZCKgN.png")
+					.addFields(
+						{ name: "Author", value: `/u/${post.author}`, inline: true },
+						{ name: "Content Warning", value: post.over_18 ? "18+" : "None", inline: true }
+					)
+					.setFooter({ text: `/r/ColoradoAvalanche`, iconURL: "https://i.imgur.com/yTWkQnj.png" });
 
-				.addFields(
-					{ name: "Author", value: `/u/${post.author}`, inline: true },
-					{ name: "Content Warning", value: post.over_18 ? "18+" : "None", inline: true }
-				)
-				.setFooter({ text: `/r/ColoradoAvalanche`, iconURL: "https://i.imgur.com/yTWkQnj.png" });
-
-			if (post.selftext) {
-				data.setDescription(post.selftext);
-			}
-
-			if (!post.over_18) {
-				if (post.url.endsWith(".jpg") || post.url.endsWith(".png") || post.url.endsWith(".gif")) {
-					data.setImage(post.url);
-				} else if (post.thumbnail !== "default") {
-					data.setImage(post.thumbnail);
+				if (post.selftext) {
+					data.setDescription(post.selftext);
 				}
-			}
 
-			await channel.send({ embeds: [data] });
-			await RedditPost.create({ post_id: postHash });
+				if (!post.over_18) {
+					if (
+						post.url.endsWith(".jpg") ||
+						post.url.endsWith(".png") ||
+						post.url.endsWith(".gif") ||
+						post.url.endsWith(".jpsg")
+					) {
+						data.setImage(post.url);
+					} else if (post.thumbnail !== "default" && post.thumbnail !== "self") {
+						data.setImage(post.thumbnail);
+					}
+				}
+
+				await channel.send({ embeds: [data] });
+				await RedditPost.create({ post_id: postHash });
+			} catch (e) {
+				console.log(e);
+				await channel.send("Error: " + e);
+			}
 		}
 	}
 };
