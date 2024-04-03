@@ -64,7 +64,6 @@ exports.RedditFeed = class RedditFeed {
 				await RedditPost.create({ post_id: postHash });
 			} catch (e) {
 				console.log(e);
-				await channel.send("Error: " + e);
 			}
 		}
 	}
