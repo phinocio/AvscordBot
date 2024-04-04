@@ -18,7 +18,8 @@ exports.checkIfBot = async function checkMsg(msg) {
 	if (
 		msgContent.includes("@everyone") ||
 		msgContent.includes("free nitro") ||
-		msgContent.includes("discord nitro for free")
+		msgContent.includes("discord nitro for free") ||
+		msgContent.includes("airdrop")
 	) {
 		reportMessage(msg);
 		await msg.member.roles.add(process.env.MUTE_ROLE);
