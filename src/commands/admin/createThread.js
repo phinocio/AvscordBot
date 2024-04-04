@@ -1,6 +1,5 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
 const GameThread = require("../../GameThread");
-const formatInTimeZone = require("date-fns-tz/formatInTimeZone");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -15,7 +14,6 @@ module.exports = {
 		let thread = await gameThread.getThread();
 		// TODO: check db for created thread
 
-		console.log(`Current time is: ${formatInTimeZone(new Date(), "America/Denver", "yyyy-MM-dd")}`);
 		if (!thread) {
 			thread = await gameThread.create();
 		}

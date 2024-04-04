@@ -11,7 +11,13 @@ const { RedditPost } = require("./src/database/database");
 
 // Create a new client instance
 const client = new Client({
-	intents: [GatewayIntentBits.Guilds],
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMembers,
+		GatewayIntentBits.GuildPresences,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+	],
 	presence: { activities: [{ type: ActivityType.Watching, name: "Georgiev let in four" }], status: "online" },
 });
 
