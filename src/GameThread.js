@@ -1,6 +1,6 @@
-const formatInTimeZone = require("date-fns-tz/formatInTimeZone");
+const { formatInTimeZone } = require("date-fns-tz");
+const { getUnixTime } = require("date-fns");
 const NHLApi = require("./api/NHLApi");
-// const { threadsChannel, teamName, pingRole } = require("../config.json");
 const { ThreadAutoArchiveDuration, EmbedBuilder } = require("discord.js");
 
 module.exports = class GameThread {
@@ -33,6 +33,11 @@ module.exports = class GameThread {
 				iconURL: "https://i.imgur.com/yTWkQnj.png",
 			})
 			.setDescription("Go team, do the sport.")
+			.addFields({
+				name: "Game Time in Your Timezone",
+				value: `<t:${getUnixTime(game.startTimeUTC)}:f>`,
+				inline: true,
+			})
 			.setFooter({
 				text: `${game.venue.default} - ${game.tvBroadcasts.reduce((acc, x) => {
 					return acc + x.network + " ";
