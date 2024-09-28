@@ -23,6 +23,9 @@ exports.RedditFeed = class RedditFeed {
 
 		newPosts = JSON.parse(resp);
 
+		if (!newPosts.data) {
+			return;
+		}
 		const post = newPosts.data.children[0].data;
 		const postHash = md5(post.title + post.author + post.created_utc).toString();
 		const postExists = await RedditPost.findOne({ where: { post_id: postHash } });
