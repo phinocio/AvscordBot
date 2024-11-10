@@ -1,5 +1,5 @@
-const { formatInTimeZone } = require("date-fns-tz");
-const { getUnixTime } = require("date-fns");
+const { TZDate } = require("@date-fns/tz");
+const { getUnixTime, format } = require("date-fns");
 const NHLApi = require("./api/NHLApi");
 const { ThreadAutoArchiveDuration, EmbedBuilder } = require("discord.js");
 
@@ -11,7 +11,7 @@ module.exports = class GameThread {
 
 	async getGame() {
 		const game = await this.api.getNextGame();
-		const date = formatInTimeZone(new Date(game.startTimeUTC), "America/Denver", "MMM dd h:mmb zzz");
+		const date = format(new TZDate(new Date(game.startTimeUTC), "America/Denver"), "MMM dd h:mmb zzz");
 		return { threadName: `${game.awayTeam.abbrev} @ ${game.homeTeam.abbrev} (${date})`, game: game };
 	}
 

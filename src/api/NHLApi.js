@@ -1,4 +1,5 @@
-const { formatInTimeZone } = require("date-fns-tz");
+const { TZDate } = require("@date-fns/tz");
+const { format } = require("date-fns");
 
 module.exports = class NHLApi {
 	constructor(team) {
@@ -15,7 +16,7 @@ module.exports = class NHLApi {
 	}
 
 	async getNextGame() {
-		const date = formatInTimeZone(new Date(), "America/Denver", "yyyy-MM-dd");
+		const date = format(new TZDate(new Date(), "America/Denver"), "yyyy-MM-dd");
 		const resp = await this.getWeekSchedule(date);
 		const data = await resp.json();
 

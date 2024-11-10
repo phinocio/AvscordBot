@@ -1,13 +1,13 @@
 require("dotenv").config();
 
 const { Client, Collection, Events, GatewayIntentBits, ActivityType } = require("discord.js");
-const GameThread = require("./src/GameThread");
 const cron = require("node-cron");
 const fs = require("node:fs");
 const path = require("node:path");
-const formatInTimeZone = require("date-fns-tz/formatInTimeZone");
 const { RedditFeed } = require("./src/cron/redditFeed");
 const { RedditPost } = require("./src/database/database");
+const createGameThread = require("./src/helpers/createGameThread");
+const { sarcasmify } = require("./src/helpers/sarcasmify");
 
 // Create a new client instance
 const client = new Client({
@@ -61,31 +61,24 @@ client.login(process.env.TOKEN);
 
 // 0 14 * * * is 7am MT/2pm UTC. Server is in UTC.
 cron.schedule("0 14 * * *", async () => {
-	const gameThread = new GameThread(client);
-
-	const { game } = await gameThread.getGame();
-
-	if (
-		formatInTimeZone(new Date(), "America/Denver", "yyyy-MM-dd") ===
-		formatInTimeZone(game.startTimeUTC, "America/Denver", "yyyy-MM-dd")
-	) {
-		const channel = client.channels.cache.get(process.env.THREADS_CHANNEL);
-		let thread = await gameThread.getThread();
-
-		if (!thread) {
-			thread = await gameThread.create();
-
-			if (thread.joinable()) {
-				await thread.join();
-			}
-		}
-
-		channel.send(`Join the Game Day Thread: ${thread}`);
-	}
+	await createGameThread(client);
 });
 
 const redditFeed = new RedditFeed();
 // * * * * * is every minute
 cron.schedule("* * * * *", () => {
 	redditFeed.getNewPosts(client);
+});
+
+client.on(Events.MessageCreate, async (message) => {
+	if (message.author.bot) {
+		return;
+	}
+
+	if (message.content.toLowerCase() === "where thread") {
+		message.reply(sarcasmify("Where thread"));
+
+		await createGameThread(client);
+	}
+	console.log(message.content);
 });
