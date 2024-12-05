@@ -80,7 +80,7 @@ client.on(Events.MessageCreate, async (message) => {
 
 		// only create GDT if it's at least 7am on game day
 		if (new Date().getUTCHours() < 14) {
-			message.reply("https://i.imgur.com/rY09A7Z.jpeg"); // todo: store locally and embed as image
+			message.reply("https://i.imgur.com/rY09A7Z.jpeg"); // todo: store locally instead?
 		} else {
 			await createGameThread(client);
 		}
