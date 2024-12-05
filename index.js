@@ -76,12 +76,11 @@ client.on(Events.MessageCreate, async (message) => {
 	}
 
 	if (message.content.toLowerCase() === "where thread") {
-		message.reply(sarcasmify("Where thread"));
-
 		// only create GDT if it's at least 7am on game day
 		if (new Date().getUTCHours() < 14) {
 			message.reply("https://i.imgur.com/rY09A7Z.jpeg"); // todo: store locally instead?
 		} else {
+			message.reply(sarcasmify("Where thread"));
 			await createGameThread(client);
 		}
 	}
