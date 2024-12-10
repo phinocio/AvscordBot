@@ -18,7 +18,7 @@ const client = new Client({
 		GatewayIntentBits.GuildMessages,
 		GatewayIntentBits.MessageContent,
 	],
-	presence: { activities: [{ type: ActivityType.Watching, name: "Georgiev let in four" }], status: "online" },
+	presence: { activities: [{ type: ActivityType.Custom, name: "Wood" }], status: "online" },
 });
 
 client.commands = new Collection();
@@ -90,6 +90,4 @@ client.on(Events.MessageCreate, async (message) => {
 			message.reply(sarcasmify("first"));
 		}
 	}
-
-	console.log(message.content);
 });
