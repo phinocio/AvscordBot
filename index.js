@@ -64,11 +64,11 @@ cron.schedule("0 14 * * *", async () => {
 	await createGameThread(client);
 });
 
-const redditFeed = new RedditFeed();
-// * * * * * is every minute
-cron.schedule("* * * * *", () => {
-	redditFeed.getNewPosts(client);
-});
+// const redditFeed = new RedditFeed();
+// // * * * * * is every minute
+// cron.schedule("* * * * *", () => {
+// 	redditFeed.getNewPosts(client);
+// });
 
 client.on(Events.MessageCreate, async (message) => {
 	if (message.author.bot) {
