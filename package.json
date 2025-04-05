@@ -21,18 +21,18 @@
 		"@date-fns/tz": "^1.2.0",
 		"crypto-js": "^4.2.0",
 		"date-fns": "^4.1.0",
-		"discord.js": "^14.16.3",
+		"discord.js": "^14.18.0",
 		"dotenv": "^16.4.7",
 		"node-cron": "^3.0.3",
-		"sequelize": "^6.37.5",
+		"sequelize": "^6.37.7",
 		"sqlite3": "^5.1.7"
 	},
 	"devDependencies": {
-		"eslint": "^9.16.0",
-		"eslint-config-prettier": "^9.1.0",
-		"globals": "^15.13.0",
-		"nodemon": "^3.1.7",
-		"prettier": "^3.4.2",
-		"typescript": "^5.7.2"
+		"eslint": "^9.24.0",
+		"eslint-config-prettier": "^10.1.1",
+		"globals": "^15.15.0",
+		"nodemon": "^3.1.9",
+		"prettier": "^3.5.3",
+		"typescript": "^5.8.3"
 	}
 }
