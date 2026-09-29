@@ -1,5 +1,5 @@
 services:
-    app:
+    avscordbot-app:
         build:
             context: .
             dockerfile: Dockerfile
@@ -8,5 +8,3 @@ services:
         container_name: avscordbot-app
         restart: unless-stopped
         entrypoint: sh -c "node ."
-        volumes:
-            - ./storage:/app/storage
