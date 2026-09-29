@@ -4,8 +4,6 @@ const { Client, Collection, Events, GatewayIntentBits, ActivityType } = require(
 const cron = require("node-cron");
 const fs = require("node:fs");
 const path = require("node:path");
-const { RedditFeed } = require("./src/cron/redditFeed");
-const { RedditPost } = require("./src/database/database");
 const createGameThread = require("./src/helpers/createGameThread");
 const { sarcasmify } = require("./src/helpers/sarcasmify");
 
@@ -53,7 +51,6 @@ for (const file of eventFiles) {
 }
 
 client.once(Events.ClientReady, (readyClient) => {
-	RedditPost.sync();
 	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 
